@@ -19,7 +19,7 @@ public class Window  {
     public Window(){
         
         try {
-            map = new ImageIcon(ImageIO.read(new File("Java\\img.png")));
+            map = new ImageIcon(ImageIO.read(new File("img.png")));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             System.out.println("Could not find file");

@@ -15,14 +15,11 @@ import edu.wpi.first.util.WPIUtilJNI;
  */
 public class Program {
 
-    public static NetworkTableInstance table = NetworkTableInstance.create();
-    static DoublePublisher xPub;
-    static DoublePublisher yPub;
+    public static DoublePublisher xPub;
+    public static DoublePublisher yPub;
+    
     
     public static void main(String[] args) throws IOException, Exception {
-
-        new Window();
-
 
         NetworkTablesJNI.Helper.setExtractOnStaticLoad(false);
         WPIUtilJNI.Helper.setExtractOnStaticLoad(false);
@@ -31,8 +28,11 @@ public class Program {
 
         CombinedRuntimeLoader.loadLibraries(Program.class, "wpiutiljni", "wpimathjni", "ntcorejni", "cscorejnicvstatic");
 
+        new Window();
+        
+        NetworkTableInstance table = NetworkTableInstance.create();
 
-        table.startLocal();
+        table.startServer("networktables.json", "10.100.11.144", 1735, 5810);
 
         xPub = table.getDoubleTopic("x").publish();
         yPub = table.getDoubleTopic("y").publish();
