@@ -24,7 +24,7 @@ public class Window  {
 
     Popup popup;
     JFrame popupFrame;
-    JLabel popupLabel;
+    JRotatingPanel popupPanel;
     JSlider popupSlider;
 
     private JLabel myLabel;
@@ -64,16 +64,25 @@ public class Window  {
 
         // ========== Create Popup Window =============
         popupFrame = new JFrame();
-        popupLabel = new JLabel(new ImageIcon(robot));
-        popupSlider = new JSlider(0, 360);
+        popupSlider = new JSlider(0, 360, 0);
+        popupPanel = new JRotatingPanel(popupSlider, robot);
+        
 
-        popupLabel.setBounds(100, 50, 200, 200);
+        popupPanel.setBounds(100, 50, 200, 200);
+
         popupSlider.setBounds(25, 300, 350, 50);
+        popupSlider.setPaintTrack(true);
+        popupSlider.setPaintTicks(true);
+        popupSlider.setPaintLabels(true);
+        popupSlider.setMajorTickSpacing(45);
+        popupSlider.setMinorTickSpacing(5);
+        popupSlider.setSnapToTicks(true);
 
-        popupFrame.add(popupLabel);
+
+        popupFrame.add(popupPanel);
         popupFrame.add(popupSlider);
 
-       
+        popupPanel.setVisible(true);
 
         popupFrame.setSize(400, 400);
         popupFrame.setResizable(false);
@@ -87,6 +96,7 @@ public class Window  {
             @Override
             public void stateChanged(ChangeEvent e) {
                 currentAngle = popupSlider.getValue();
+                popupPanel.refresh();
             }
             
         });
