@@ -24,8 +24,9 @@ public class Window  {
 
     Popup popup;
     JFrame popupFrame;
-    JRotatingPanel popupPanel;
+    JRotatingComponent popupImg;
     JSlider popupSlider;
+    private JButton buttonConfirm;
 
     private JLabel myLabel;
     private JButton buttonCancel;
@@ -41,6 +42,7 @@ public class Window  {
     private final int labelHeight = 516;
 
     private int currentAngle;
+    private int previousAngle;
 
     private final double xScalingFactor = fieldWidth / labelWidth;
     private final double yScalingFactor = fieldHeight / labelHeight;
@@ -63,14 +65,20 @@ public class Window  {
         }
 
         // ========== Create Popup Window =============
+        currentAngle = 0;
         popupFrame = new JFrame();
         popupSlider = new JSlider(0, 360, 0);
-        popupPanel = new JRotatingPanel(popupSlider, robot);
-        
+        popupImg = new JRotatingComponent(popupSlider, robot);
 
-        popupPanel.setBounds(100, 50, 200, 200);
+        buttonConfirm = new JButton("Finish");
+        buttonConfirm.setBounds(100, 365, 200, 50);
+        buttonConfirm.setBackground(Color.GREEN);
+        buttonConfirm.setForeground(Color.BLACK);
+        buttonConfirm.setFocusable(false);
 
-        popupSlider.setBounds(25, 300, 350, 50);
+        popupImg.setBounds(75, 25, 250, 250);
+
+        popupSlider.setBounds(20, 300, 350, 50);
         popupSlider.setPaintTrack(true);
         popupSlider.setPaintTicks(true);
         popupSlider.setPaintLabels(true);
@@ -79,12 +87,13 @@ public class Window  {
         popupSlider.setSnapToTicks(true);
 
 
-        popupFrame.add(popupPanel);
+        popupFrame.add(popupImg);
         popupFrame.add(popupSlider);
+        popupFrame.add(buttonConfirm);
 
-        popupPanel.setVisible(true);
+        popupImg.setVisible(true);
 
-        popupFrame.setSize(400, 400);
+        popupFrame.setSize(400, 475);
         popupFrame.setResizable(false);
         popupFrame.setLayout(null);
         popupFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -95,8 +104,7 @@ public class Window  {
         popupSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                currentAngle = popupSlider.getValue();
-                popupPanel.refresh();
+                popupImg.refresh();
             }
             
         });
@@ -174,6 +182,12 @@ public class Window  {
 
         buttonAngle.addActionListener(e -> {
             popupFrame.setVisible(true);
+            previousAngle = popupSlider.getValue();
+        });
+
+        buttonConfirm.addActionListener(e -> {
+            popupFrame.setVisible(false);
+            currentAngle = popupSlider.getValue();
         });
 
 
@@ -193,27 +207,14 @@ public class Window  {
                         g.fillOval(e.getX() - 10, e.getY() - 10, 20,20);
 
                     } else if (eventMenu.getSelectedItem().equals("Pickup Cone")) {
-
-                        arr.add(String.format("X: %f  Y: %f  Event: %s  Angle: %d", scaleX(e.getX()), scaleY(e.getY()), eventMenu.getSelectedItem(), currentAngle));
-                        g.setColor(Color.WHITE);
-                        g.fillOval(e.getX() - 17, e.getY() - 17, 34,34);
-                        g.drawImage(cone, e.getX() - 15, e.getY() - 15, null);
-                        eventMenu.setSelectedIndex(0);
+                        drawEventIcon(cone, g, e);
 
                     } else if (eventMenu.getSelectedItem().equals("Pickup Cube")) {
-
-                        arr.add(String.format("X: %f  Y: %f  Event: %s  Angle: %d", scaleX(e.getX()), scaleY(e.getY()), eventMenu.getSelectedItem(), currentAngle));
-                        g.setColor(Color.WHITE);
-                        g.fillOval(e.getX() - 17, e.getY() - 17, 34,34);
-                        g.drawImage(cube, e.getX() - 15, e.getY() - 15, null);
-                        eventMenu.setSelectedIndex(0);
+                        drawEventIcon(cube, g, e);
 
                     } else if (eventMenu.getSelectedItem().equals("Balance")) {
-                        arr.add(String.format("X: %f  Y: %f  Event: %s  Angle: %d", scaleX(e.getX()), scaleY(e.getY()), eventMenu.getSelectedItem(), currentAngle));
-                        g.setColor(Color.WHITE);
-                        g.fillOval(e.getX() - 17, e.getY() - 17, 34,34);
-                        g.drawImage(balance, e.getX() - 15, e.getY() - 15, null);
-                        eventMenu.setSelectedIndex(0);
+                        drawEventIcon(balance, g, e);
+                        
                     }
                } else {
                    System.out.printf("X: %f  Y: %f  Event: %s  Angle: %d \n", scaleX(e.getX()), scaleY(e.getY()), eventMenu.getSelectedItem(), currentAngle);
@@ -263,6 +264,14 @@ public class Window  {
         buttonStart.setText("Start Path Mode");
         myLabel.repaint();
         pathMode = false;
+    }
+
+    public void drawEventIcon(BufferedImage img, Graphics g, java.awt.event.MouseEvent e) {
+        arr.add(String.format("X: %f  Y: %f  Event: %s  Angle: %d", scaleX(e.getX()), scaleY(e.getY()), eventMenu.getSelectedItem(), currentAngle));
+        g.setColor(Color.WHITE);
+        g.fillOval(e.getX() - 17, e.getY() - 17, 34,34);
+        g.drawImage(img, e.getX() - 15, e.getY() - 15, null);
+        eventMenu.setSelectedIndex(0);
     }
 
 }
